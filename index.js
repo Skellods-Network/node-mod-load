@@ -51,7 +51,7 @@
         else {
 
             prefetch = true;
-            me.libs = {};
+            me.libs = _mods;
         }
     };
 
@@ -67,17 +67,6 @@
             delete _queue[keys[i]];
             i++;
         }
-    };
-
-    var _enableLazyFetch
-    = me.enableLazyFetch = function ($enable) {
-
-        if (typeof $enable === 'undefined') {
-
-            $enable = true;
-        }
-
-        prefetch = !$enable;
     };
 
     var _addPath

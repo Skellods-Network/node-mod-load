@@ -3,15 +3,14 @@
 Lazy load modules and create consistent meta-modules
 
 Working with a huge project means maintaining lots of moduls. Sometimes those modules form circular dependencies, which are not bad by default, but bring lots of problems with them (namely code which will not be executed).
-In order to solve this problem, modules should be lazy-loaded, meaning they are only required when they are really needed in code.
+In order to solve this problem, modules should be lazy-loaded, meaning they are only required when they are really needed in code;
+or alternatively modules should not be included at the top of a script but rather at the beginning of the program and then cached.
 That way even circular dependencies between modules will not be a problem as all code in a module can be read entirely.
 This module will not solve circular calls. It will only allow circular dependencies and is no excuse for bad programming style and developer's errors!
 
 In addition to regular modules, "meta-modules" can be added and used like every other module in the list of modules. Meta-modules are virtual modules, which are created during runtime.
 They do not have a separate file for them and should just be a JS-Object which can be used like a module.
-
-Node-Mod-Load can make use of JS Harmony's Proxy feature to only look up modules when they are needed instead of pre-fetching a file-list of available modules (without load them!).
-Depending on the use-case, this might be more or less performant. You can disable this behavior by calling `enableLazyFetch(false)`.
+Node-Mod-Load can make use of JS Harmony's Proxy feature to lazy-load modules. If proxies are not available, all modules will be loaded at once.
 
 This module was first created for SHPS, but then separated for easy use by everyone :)
 
@@ -29,10 +28,6 @@ How To Use
 You will first need to create a list of modules and meta-modules
 ```js
 var libs = require('node-mod-load');
-
-// Uncommenting the next line will disable lazy-fetching resulting in the module prefetching all available modules (without loading them)
-// If the first parameter is true, lazy-fetch will be (re-)enabled!
-libs.enableLazyFetch(false);
 
 // This will add a single module or module-package to the list
 // addPath will return a promise
@@ -55,6 +50,7 @@ libs.addMeta('meta', { hellowWorld: () => { console.log('Hey there!'); } });
 // The next uncommented line will make Node-Mod-Load flush the list of files, directories and meta-modules.
 // Normally Node-Mod-Load would only work on that queue when a lib is requested for the first time if Harmony-Proxies are enabled
 // If you do not enable Proxies or disable lazy-fetch, new entries will directly be worked on, so no flush required
+// Do not use this function if not really needed as it destroys lazy-loading
 libs.flush();
 ```
 
@@ -63,7 +59,7 @@ After building the list you can just require Node-Mod-Load anywhere and get the 
 var libs = require('node-mod-load').libs; // <- the object `libs` will include everything you added
 
 var hellowFun = () => {
-  libs.meta.hellowWorld();
+  return libs.meta.hellowWorld();
 };
 ```
 
