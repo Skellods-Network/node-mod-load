@@ -15,7 +15,7 @@ Node-Mod-Load can make use of JS Harmony's Proxy feature to lazy-load modules. I
 This module was first created for SHPS, but then separated for easy use by everyone :)
 
 ### Version
-1.0.0
+2.0.0
 
 ### Installation
 ```sh
@@ -49,7 +49,7 @@ libs.addMeta('meta', { hellowWorld: () => { console.log('Hey there!'); } });
 
 // The next uncommented line will make Node-Mod-Load flush the list of files, directories and meta-modules.
 // Normally Node-Mod-Load would only work on that queue when a lib is requested for the first time if Harmony-Proxies are enabled
-// If you do not enable Proxies or disable lazy-fetch, new entries will directly be worked on, so no flush required
+// If you do not enable Proxies, new entries will directly be worked on, so no flush required
 // Do not use this function if not really needed as it destroys lazy-loading
 libs.flush();
 ```
@@ -71,6 +71,11 @@ Planned Features (TODO)
 
 Version History
 ----
+
+- 2.0.0
+  - [SEMVER MAJOR] missing package.json and index.json will not reject the promise any more
+  - [SEMVER PATCH] fixed problems with BOM
+- 1.0.1 - Added Keywords
 
 License
 ----

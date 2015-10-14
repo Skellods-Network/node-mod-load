@@ -108,7 +108,7 @@
                                 if ($err) {
 
                                     // This is no module package
-                                    $rej($err);
+                                    $res($err);
                                     return;
                                 }
 
@@ -136,8 +136,14 @@
                                     $rej($err);
                                     return;
                                 }
+                                
+                                var offset = 0;
+                                if (buffer[0] === 239) {
 
-                                var data = buffer.toString("utf8", 0, buffer.length);
+                                    offset = 3;
+                                }
+
+                                var data = buffer.toString("utf8", offset, buffer.length);
                                 try {
 
                                     // Carefully parse the file... it might be malformed.
