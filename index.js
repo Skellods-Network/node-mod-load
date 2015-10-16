@@ -54,6 +54,69 @@
             me.libs = _mods;
         }
     };
+    
+    /**
+     * @return Promise($Object)
+     */
+    var _getPackageInfo 
+    = me.getPackageInfo = function ($path) {
+        
+        return new Promise(function ($res, $rej) {
+
+            // Let's see if the given directory is a package module
+            fs.open($path + path.sep + 'package.json', 'r', function ($err, $fd) {
+                
+                if ($err) {
+
+                    $rej($err);
+                    return;
+                }
+
+                // YaY, there is a package.json. Let's read it to find out the name of the module-package
+                fs.fstat($fd, function ($err, $stats) {
+                    
+                    if ($err) {
+                        
+                        $rej($err);
+                        fs.close($fd);
+                        return;
+                    }
+                    
+                    var buffer = new Buffer($stats.size);
+                    fs.read($fd, buffer, 0, buffer.length, null, function ($err, $bytesRead, $buffer) {
+                        
+                        if ($err) {
+                            
+                            $rej($err);
+                            return;
+                        }
+                        
+                        var offset = 0;
+                        if (buffer[0] === 239) {
+                            
+                            offset = 3;
+                        }
+                        
+                        var data = buffer.toString("utf8", offset, buffer.length);
+                        try {
+                            
+                            // Carefully parse the file... it might be malformed.
+                            var conf = JSON.parse(data);
+                            $res(conf);
+                        }
+                        catch ($e) {
+                            
+                            $rej($e);
+                        }
+                        finally {
+                            
+                            fs.close($fd);
+                        }
+                    });
+                });
+            });
+        });
+    };
 
     var _flush
     = me.flush = function () {
@@ -96,70 +159,27 @@
                 else {
 
                     name = $path;
+                    
+                    _getPackageInfo($path).then(function ($info) {
+                    
+                        _queue[$info.name] = $path;
+                        $res($info.name);
+                    }, function ($err) {
 
-                    // Let's see if the given directory is a package module
-                    fs.open($path + path.sep + 'package.json', 'r', function ($err, $fd) {
-
-                        if ($err) {
-
-                            // File does not exist... lets look for index.js
-                            fs.open($path + path.sep + 'index.js', 'r', function ($err, $fd) {
-
-                                if ($err) {
-
-                                    // This is no module package
-                                    $res($err);
-                                    return;
-                                }
-
-                                fs.close($fd);
-                            });
-
-                            return;
-                        }
-
-                        // YaY, there is a package.json. Let's read it to find out the name of the module-package
-                        fs.fstat($fd, function ($err, $stats) {
-
+                        // File does not exist... lets look for index.js
+                        fs.open($path + path.sep + 'index.js', 'r', function ($err, $fd) {
+                            
                             if ($err) {
-
-                                $rej($err);
-                                fs.close($fd);
+                                
+                                // This is no module package
+                                $res($err);
                                 return;
                             }
-
-                            var buffer = new Buffer($stats.size);
-                            fs.read($fd, buffer, 0, buffer.length, null, function ($err, $bytesRead, $buffer) {
-
-                                if ($err) {
-
-                                    $rej($err);
-                                    return;
-                                }
-                                
-                                var offset = 0;
-                                if (buffer[0] === 239) {
-
-                                    offset = 3;
-                                }
-
-                                var data = buffer.toString("utf8", offset, buffer.length);
-                                try {
-
-                                    // Carefully parse the file... it might be malformed.
-                                    var conf = JSON.parse(data);
-                                    _queue[conf.name] = $path;
-                                    $res(conf.name);
-                                }
-                                catch ($e) {
-
-                                    $rej($e);
-                                }
-                                finally {
-
-                                    fs.close($fd);
-                                }
-                            });
+                            
+                            var name = path.basename($path);
+                            $res(name);
+                            _queue[name] = $path + path.sep + 'index.js';
+                            fs.close($fd);
                         });
                     });
                 }
