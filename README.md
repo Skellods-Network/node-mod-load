@@ -15,7 +15,7 @@ Node-Mod-Load can make use of JS Harmony's Proxy feature to lazy-load modules. I
 This module was first created for SHPS, but then separated for easy use by everyone :)
 
 ### Version
-2.0.0
+2.1.0
 
 ### Installation
 ```sh
@@ -27,31 +27,35 @@ How To Use
 
 You will first need to create a list of modules and meta-modules
 ```js
-var libs = require('node-mod-load');
+var nml = require('node-mod-load');
+
+// Node Mod Load is able to read package information and return object containing said information
+var packageConfig = nml.getPackageInfo('./plugins/demo');
+console.log('Plugin found: ' + packageConfig.name);
 
 // This will add a single module or module-package to the list
 // addPath will return a promise
-libs.addPath('./some-module.js');
-libs.addPath('./my-functionality');
+nml.addPath('./some-module.js');
+nml.addPath('./my-functionality');
 
 // If you need addPath to be sync, just set the second parameter to true
-libs.addPath('./somePackage', true);
+nml.addPath('./somePackage', true);
 
 // This will add all .js modules and all module-packages in the directory "./libs" to the list
 // addDir used like this will return a Promise
-libs.addDir('./libs');
+nml.addDir('./libs');
 
 // addDir can also be used as a sync function by adding a true as second parameter
-libs.addDir('./modules', true);
+nml.addDir('./modules', true);
 
 // This will add a meta-module to the list
-libs.addMeta('meta', { hellowWorld: () => { console.log('Hey there!'); } });
+nml.addMeta('meta', { hellowWorld: () => { console.log('Hey there!'); } });
 
 // The next uncommented line will make Node-Mod-Load flush the list of files, directories and meta-modules.
 // Normally Node-Mod-Load would only work on that queue when a lib is requested for the first time if Harmony-Proxies are enabled
 // If you do not enable Proxies, new entries will directly be worked on, so no flush required
 // Do not use this function if not really needed as it destroys lazy-loading
-libs.flush();
+nml.flush();
 ```
 
 After building the list you can just require Node-Mod-Load anywhere and get the module from it
@@ -72,6 +76,8 @@ Planned Features (TODO)
 Version History
 ----
 
+- 2.1.0
+  - [SEMVER MINOR] exposed `getPackageInfo()`
 - 2.0.0
   - [SEMVER MAJOR] missing package.json and index.json will not reject the promise any more
   - [SEMVER PATCH] fixed problems with BOM
