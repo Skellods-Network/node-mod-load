@@ -15,7 +15,7 @@ Node-Mod-Load can make use of JS Harmony's Proxy feature to lazy-load modules. I
 This module was first created for SHPS, but then separated for easy use by everyone :)
 
 ### Version
-2.1.0
+2.1.1
 
 ### Installation
 ```sh
@@ -29,7 +29,7 @@ You will first need to create a list of modules and meta-modules
 ```js
 var nml = require('node-mod-load');
 
-// Node Mod Load is able to read package information and return object containing said information
+// Node Mod Load is able to read package information and return an object containing said information
 var packageConfig = nml.getPackageInfo('./plugins/demo');
 console.log('Plugin found: ' + packageConfig.name);
 
@@ -67,15 +67,12 @@ var hellowFun = () => {
 };
 ```
 
-Planned Features (TODO)
-----
-
-- remove-* methods
-- handle modules with same name
-
 Version History
 ----
 
+- 2.1.1
+  - [SEMVER PATCH] fixed non-proxy version
+  - [SEMVER PATCH] moved TODO list into github-issues
 - 2.1.0
   - [SEMVER MINOR] exposed `getPackageInfo()`
 - 2.0.0

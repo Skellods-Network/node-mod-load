@@ -50,7 +50,7 @@
         }
         else {
 
-            prefetch = true;
+            _prefetch = true;
             me.libs = _mods;
         }
     };
@@ -124,12 +124,31 @@
         var i = 0;
         var keys = Object.keys(_queue);
         var l = keys.length;
-        while (i < l) {
+        var err = {
+        
+            _count: 0,
+        };
 
-            _mods[keys[i]] = require(_queue[keys[i]]);
-            delete _queue[keys[i]];
-            i++;
+        while (i < l) {
+            
+            try {
+
+                _mods[keys[i]] = require(_queue[keys[i]]);
+            }
+            catch ($e) {
+
+                err[keys[i]] = $e;
+                err._count++;
+            }
+            finally {
+
+                delete _queue[keys[i]];
+                i++;
+            }
         }
+
+        return err.count == 0   ? null
+                                : err;
     };
 
     var _addPath
@@ -145,7 +164,7 @@
                     return;
                 }
 
-                var name = '';
+                let name = '';
                 if ($stats.isFile()) {
 
                     name = path.basename($path, '.js');
@@ -177,8 +196,13 @@
                             }
                             
                             var name = path.basename($path);
-                            $res(name);
                             _queue[name] = $path + path.sep + 'index.js';
+                            $res(name);
+                            if (_prefetch) {
+                                
+                                _flush();
+                            }
+
                             fs.close($fd);
                         });
                     });
@@ -247,13 +271,46 @@
                 else {
 
                     var proms = [];
+                    var tmpPrefetch = _prefetch;
+                    _prefetch = false;
                     while (i < l) {
 
                         proms.push(_addPath(path.normalize($dir + path.sep) + $files[i], $sync));
                         i++;
                     }
 
-                    Promise.all(proms).then($res, $rej);
+                    Promise.all(proms).then(function ($r) {
+                        
+                        _prefetch = tmpPrefetch;
+
+                        var err = null;
+                        if (_prefetch) {
+                            
+                            err = _flush();
+                        }
+                        
+                        if (err) {
+
+                            let i = 0;
+                            var keys = Object.keys(err);
+                            var l = keys.length;
+                            while (i < l) {
+                                
+                                if (keys[i] === '_count') {
+
+                                    i++;
+                                    continue;
+                                }
+
+                                err[keys[i]].what = keys[i];
+
+                                $r[$r.indexOf(keys[i])] = err[keys[i]];
+                                i++;
+                            }
+                        }
+
+                        $res($r);
+                    }, $rej);
                 }
                 
                 return $files;

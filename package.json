@@ -1,27 +1,41 @@
-﻿{
-    "name": "node-mod-load",
-    "version": "2.0.0",
-    "description": "Dynamic Module Loader for Node.JS",
-    "main": "index.js",
-    "homepage": "https://shps.io",
-    "author": {
-        "name": "Marco Alka",
-        "email": "me@marco-alka.de",
-        "url": "https://marco-alka.de"
-    },
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/Skellods-Network/node-mod-load.git"
-    },
-    "engines": {
-        "node": ">=4.0.0"
-    },
-    "keywords": [
-        "module",
-        "load",
-        "loader",
-        "lazy",
-        "SHPS"
-    ],
-    "license": "MIT"
+{
+  "author": {
+    "email": "me@marco-alka.de",
+    "name": "Marco Alka",
+    "url": "https://marco-alka.de"
+  },
+  "bugs": {
+    "url": "https://github.com/Skellods-Network/node-mod-load/issues"
+  },
+  "dependencies": {},
+  "description": "Dynamic Module Loader for Node.JS",
+  "devDependencies": {},
+  "directories": {},
+  "engines": {
+    "node": ">=4.0.0"
+  },
+  "homepage": "https://shps.io",
+  "keywords": [
+    "SHPS",
+    "lazy",
+    "load",
+    "loader",
+    "module"
+  ],
+  "license": "MIT",
+  "main": "index.js",
+  "maintainers": [
+    {
+      "name": "maruru",
+      "email": "me@marco-alka.de"
+    }
+  ],
+  "name": "node-mod-load",
+  "optionalDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Skellods-Network/node-mod-load.git"
+  },
+  "scripts": {},
+  "version": "2.1.1"
 }
