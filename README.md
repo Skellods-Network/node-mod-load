@@ -1,5 +1,7 @@
 # Node-Mod-Load
 
+[![Join the chat at https://gitter.im/Skellods-Network/node-mod-load](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/Skellods-Network/node-mod-load?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 Lazy load modules and create consistent meta-modules
 
 Working with a huge project means maintaining lots of moduls. Sometimes those modules form circular dependencies, which are not bad by default, but bring lots of problems with them (namely code which will not be executed).
