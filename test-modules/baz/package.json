@@ -1,4 +1,4 @@
-{
+﻿{
   "author": {
     "email": "me@marco-alka.de",
     "name": "Marco Alka",
@@ -7,10 +7,8 @@
   "bugs": {
     "url": "https://github.com/Skellods-Network/node-mod-load/issues"
   },
-  "dependencies": {
-    "binary-search-tree": "^0.2.5"
-  },
-  "description": "Dynamic Module Loader for Node.JS",
+  "dependencies": {},
+  "description": "TEST",
   "devDependencies": {},
   "directories": {},
   "engines": {
@@ -32,12 +30,12 @@
       "email": "me@marco-alka.de"
     }
   ],
-  "name": "node-mod-load",
+  "name": "baz",
   "optionalDependencies": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Skellods-Network/node-mod-load.git"
   },
   "scripts": {},
-  "version": "3.0.0"
+  "version": "1.0.0"
 }
