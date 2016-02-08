@@ -14,12 +14,11 @@ This module will not solve circular calls. It will only allow circular dependenc
 
 In addition to regular modules, "meta-modules" can be added and used like every other module in the list of modules. Meta-modules are virtual modules, which are created during runtime.
 They do not have a separate file for them and should just be a JS-Object which can be used like a module.
-Node-Mod-Load can make use of JS Harmony's Proxy feature to lazy-load modules. If proxies are not available, all modules will be loaded at once.
 
 This module was first created for SHPS, but then separated for easy use by everyone :)
 
 ### Version
-2.1.1
+3.0.0
 
 ### Installation
 ```sh
@@ -29,7 +28,8 @@ $ npm i node-mod-load
 How To Use
 ----
 
-You will first need to create a list of modules and meta-modules
+You will first need to create a list of modules and meta-modules.
+The following code will use NML statically, which stores everything into the namespace `_default`
 ```js
 var nml = require('node-mod-load');
 
@@ -54,12 +54,6 @@ nml.addDir('./modules', true);
 
 // This will add a meta-module to the list
 nml.addMeta('meta', { hellowWorld: () => { console.log('Hey there!'); } });
-
-// The next uncommented line will make Node-Mod-Load flush the list of files, directories and meta-modules.
-// Normally Node-Mod-Load would only work on that queue when a lib is requested for the first time if Harmony-Proxies are enabled
-// If you do not enable Proxies, new entries will directly be worked on, so no flush required
-// Do not use this function if not really needed as it destroys lazy-loading
-nml.flush();
 ```
 
 After building the list you can just require Node-Mod-Load anywhere and get the module from it
@@ -71,9 +65,26 @@ var hellowFun = () => {
 };
 ```
 
+Instead of using NML statically, you can also use namespaces to improve overview by a great deal and separate different parts of your application transparently in the code.<br>
+Please understand that due to Node.JS's nature, all modules can only be added once. If they are required a second time, they will be added from Node.JS's cache.<br>
+```js
+var nml = require('node-mod-load');
+var myNamespacedNML = nml('myNamespace');
+
+myNamespacedNML.addDir('./subMod/src');
+myNamespacedNML.libs.foo('bar');
+
+// The following will throw, even thought we might have added nml.libs.meta object with that particular method earlier
+myNamespacedNML.libs.meta.hellowWorld();
+```
+
 Version History
 ----
 
+- 3.0.0
+  - [SEMVER MAJOR] deprecate ES6 Proxies (they are not stable yet and frankly at the moment a pain to maintain)
+  - [SEMVER MINOR] add namespaces (SHPS requirement)
+  - [SEMVER PATCH] restructure internals for better overview and debugging (works like black magic)
 - 2.1.1
   - [SEMVER PATCH] fixed non-proxy version
   - [SEMVER PATCH] moved TODO list into github-issues
