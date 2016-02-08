@@ -49,11 +49,14 @@ nml.prototype.addDir = function f_nml_addDir($dir, $sync) {
             var l = $files.length;
             if ($sync) {
 
+                var res = [];
                 while (i < l) {
 
-                    self.addPath($files[i], $sync);
+                    res.push(self.addPath($files[i], $sync));
                     i++;
                 }
+
+                return res;
             }
             else {
 
@@ -86,8 +89,6 @@ nml.prototype.addDir = function f_nml_addDir($dir, $sync) {
                     $res(r);
                 }, $rej);
             }
-
-            return $files;
         };
 
         if ($sync) {

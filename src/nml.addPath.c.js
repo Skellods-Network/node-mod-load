@@ -6,6 +6,24 @@ var path = require('path');
 var nml = require('./nml-class.h.js');
 
 
+const ERR_DUPLICATE_NAME = 'A module with the same name has already been loaded: ';
+const ERR_NOT_LOADABLE = 'A module could not be loaded by Node.JS: ';
+
+function addSafe($name, $absPath) {
+
+    if (!this.libs[$name]) {
+
+        return (typeof (this.libs[$name] = require($absPath)) !== 'undefined') ? 0 : 2;
+    }
+    else {
+
+        // I could throw here, but that would break addDir sync loops and be a pain for resolving promises
+        // even if the error is non-fatal for the application itself
+        // imho a good application should check the return values for possible problems
+        return 1;
+    }
+};
+
 nml.prototype.addPath = function f_nml_addPath($path, $sync) {
     
     var self = this;
@@ -29,8 +47,19 @@ nml.prototype.addPath = function f_nml_addPath($path, $sync) {
             if ($stats.isFile()) {
 
                 name = path.basename($path, '.js');
-                self.libs[name] = require(path.normalize(path.dirname(require.main.filename) + path.sep + $path));
-                $res(name);
+                var errn = addSafe.apply(self, [name, path.normalize(path.dirname(require.main.filename) + path.sep + $path)]);
+                if (errn == 0) {
+
+                    $res(name);
+                }
+                else if (errn == 1) {
+
+                    $rej(ERR_DUPLICATE_NAME + name);
+                }
+                else {
+
+                    $rej(ERR_NOT_LOADABLE + name);
+                }
             }
             else {
 
@@ -38,8 +67,19 @@ nml.prototype.addPath = function f_nml_addPath($path, $sync) {
 
                 self.getPackageInfo($path).then(function ($info) {
 
-                    self.libs[$info.name] = require(path.normalize(path.dirname(require.main.filename) + path.sep + $path));;
-                    $res($info.name);
+                    var errn = addSafe.apply(self, [$info.name, path.normalize(path.dirname(require.main.filename) + path.sep + $path)]);
+                    if (errn == 0) {
+
+                        $res($info.name);
+                    }
+                    else if (errn == 1) {
+
+                        $rej(ERR_DUPLICATE_NAME + $info.name);
+                    }
+                    else {
+
+                        $rej(ERR_NOT_LOADABLE + $info.name);
+                    }
                 }, function ($err) {
 
                     // Package.json does not exist... lets look for index.js
@@ -52,11 +92,22 @@ nml.prototype.addPath = function f_nml_addPath($path, $sync) {
                             return;
                         }
 
-                        var name = path.basename($path);
-                        self.libs[name] = require(path.normalize(path.dirname(require.main.filename) + path.sep + $path) + path.sep + 'index.js');
-                        $res(name);
-
                         fs.close($fd);
+                        var name = path.basename($path);
+                        var errn = addSafe.apply(self, [name, path.normalize(path.dirname(require.main.filename) + path.sep + $path) + path.sep + 'index.js']);
+
+                        if (errn == 0) {
+
+                            $res(name);
+                        }
+                        else if (errn == 1) {
+
+                            $rej(ERR_DUPLICATE_NAME + name);
+                        }
+                        else {
+
+                            $rej(ERR_NOT_LOADABLE + name);
+                        }
                     });
                 });
             }
