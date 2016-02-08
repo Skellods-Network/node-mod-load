@@ -72,6 +72,8 @@ nml.prototype.addDir = function f_nml_addDir($dir, $sync) {
                     var r = [];
                     var i = 0;
                     var l = $r.length;
+                    var ok = true;
+
                     while (i < l) {
 
                         if ($r[i].resolved) {
@@ -81,12 +83,17 @@ nml.prototype.addDir = function f_nml_addDir($dir, $sync) {
                         else if ($r[i].e.substr(0,21) !== 'Not stupidly Loadable') {
 
                             $rej($r[i].e);
+                            ok = false;
+                            break;
                         }
 
                         i++;
                     }
 
-                    $res(r);
+                    if (ok) {
+
+                        $res(r);
+                    }
                 }, $rej);
             }
         };
