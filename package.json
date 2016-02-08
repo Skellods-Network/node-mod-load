@@ -7,9 +7,7 @@
   "bugs": {
     "url": "https://github.com/Skellods-Network/node-mod-load/issues"
   },
-  "dependencies": {
-    "binary-search-tree": "^0.2.5"
-  },
+  "dependencies": {},
   "description": "Dynamic Module Loader for Node.JS",
   "devDependencies": {},
   "directories": {},
