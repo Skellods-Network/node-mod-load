@@ -25,6 +25,60 @@ This module was first created for SHPS, but then separated for easy use by every
 $ npm i node-mod-load
 ```
 
+Interface
+----
+```js
+class NML {
+
+    constructor($namespace) {
+
+        this.libs = {};
+        this.versions = {};
+    }
+
+    /**
+     * Search a directory for modules and add all
+     *
+     * @param $dir string
+     * @param $sync bool
+     *   Set to true if the method should run synchronically
+     *   Default: false
+     * @result Promise if $sync is false
+     */
+    addDir($dir, $sync) { throw 'Not Implemented'; };
+
+    /**
+     * Add an object directly
+     *
+     * @param $name string
+     * @param $obj Object
+     * @result bool
+     *   Will be true if the object was added successfully
+     *   And the object was not undefined
+     */
+    addMeta($name, $obj) { throw 'Not Implemented'; };
+
+    /**
+     * Add a module
+     *
+     * @param $path string
+     * @param $sync bool
+     *   Set to true if the method should run synchronically
+     *   Default: false
+     * @result Promise if $sync is false
+     */
+    addPath($path, $sync) { throw 'Not Implemented'; };
+
+    /**
+     * Read package.json and return the content
+     *
+     * @param $path string
+     * @result Promise(Object)
+     */
+    getPackageInfo($path) { throw 'Not Implemented'; };
+};
+```
+
 How To Use
 ----
 
@@ -66,7 +120,7 @@ var hellowFun = () => {
 ```
 
 Instead of using NML statically, you can also use namespaces to improve overview by a great deal and separate different parts of your application transparently in the code.<br>
-Please understand that due to Node.JS's nature, all modules can only be added once. If they are required a second time, they will be added from Node.JS's cache.<br>
+Please understand that due to Node.JS's nature, all modules can only be added once. If they are required a second time, they will be added from Node.JS's cache.
 ```js
 var nml = require('node-mod-load');
 var myNamespacedNML = nml('myNamespace');
@@ -76,6 +130,11 @@ myNamespacedNML.libs.foo('bar');
 
 // The following will throw, even thought we might have added nml.libs.meta object with that particular method earlier
 myNamespacedNML.libs.meta.hellowWorld();
+```
+
+When adding a module package (folder with `package.json`), the version may be retrived from the `nml.versions` object (depending on your namespace!)
+```js
+console.log('Version of foo: ' + myNamespacedNML.versions['foo']);
 ```
 
 Version History

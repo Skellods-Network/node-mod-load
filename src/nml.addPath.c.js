@@ -3,11 +3,9 @@
 var fs = require('fs');
 var path = require('path');
 
+var msg = require('./nml-messages.h.js');
 var nml = require('./nml-class.h.js');
 
-
-const ERR_DUPLICATE_NAME = 'A module with the same name has already been loaded: ';
-const ERR_NOT_LOADABLE = 'A module could not be loaded by Node.JS: ';
 
 function addSafe($name, $absPath) {
 
@@ -55,11 +53,11 @@ nml.prototype.addPath = function f_nml_addPath($path, $sync) {
                 }
                 else if (errn == 1) {
 
-                    $rej(ERR_DUPLICATE_NAME + name);
+                    $rej(msg.ERR_DUPLICATE_NAME + name);
                 }
                 else {
 
-                    $rej(ERR_NOT_LOADABLE + name);
+                    $rej(msg.ERR_NOT_LOADABLE + name);
                 }
             }
             else {
@@ -76,11 +74,11 @@ nml.prototype.addPath = function f_nml_addPath($path, $sync) {
                     }
                     else if (errn == 1) {
 
-                        $rej(ERR_DUPLICATE_NAME + $info.name);
+                        $rej(msg.ERR_DUPLICATE_NAME + $info.name);
                     }
                     else {
 
-                        $rej(ERR_NOT_LOADABLE + $info.name);
+                        $rej(msg.ERR_NOT_LOADABLE + $info.name);
                     }
                 }, function ($err) {
 
@@ -105,11 +103,11 @@ nml.prototype.addPath = function f_nml_addPath($path, $sync) {
                         }
                         else if (errn == 1) {
 
-                            $rej(ERR_DUPLICATE_NAME + name);
+                            $rej(msg.ERR_DUPLICATE_NAME + name);
                         }
                         else {
 
-                            $rej(ERR_NOT_LOADABLE + name);
+                            $rej(msg.ERR_NOT_LOADABLE + name);
                         }
                     });
                 });

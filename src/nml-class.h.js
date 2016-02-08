@@ -24,6 +24,9 @@ module.exports = class NML {
      *
      * @param $name string
      * @param $obj Object
+     * @result bool
+     *   Will be true if the object was added successfully
+     *   And the object was not undefined
      */
     addMeta($name, $obj) { throw 'Not Implemented'; };
 
