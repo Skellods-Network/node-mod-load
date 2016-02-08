@@ -24,8 +24,8 @@ nml.prototype.getPackageInfo = function f_nml_getPackageInfo($path) {
 
                 if ($err) {
 
-                    $rej($err);
                     fs.close($fd);
+                    $rej($err);
                     return;
                 }
 
@@ -34,6 +34,7 @@ nml.prototype.getPackageInfo = function f_nml_getPackageInfo($path) {
 
                     if ($err) {
 
+                        fs.close($fd);
                         $rej($err);
                         return;
                     }
