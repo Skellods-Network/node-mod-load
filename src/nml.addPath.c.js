@@ -50,6 +50,7 @@ nml.prototype.addPath = function f_nml_addPath($path, $sync) {
                 var errn = addSafe.apply(self, [name, path.normalize(path.dirname(require.main.filename) + path.sep + $path)]);
                 if (errn == 0) {
 
+                    self.versions[name] = typeof undefined;
                     $res(name);
                 }
                 else if (errn == 1) {
@@ -70,6 +71,7 @@ nml.prototype.addPath = function f_nml_addPath($path, $sync) {
                     var errn = addSafe.apply(self, [$info.name, path.normalize(path.dirname(require.main.filename) + path.sep + $path)]);
                     if (errn == 0) {
 
+                        self.versions[$info.name] = typeof $info.version === 'string' ? $info.version : typeof $info.version;
                         $res($info.name);
                     }
                     else if (errn == 1) {
@@ -98,6 +100,7 @@ nml.prototype.addPath = function f_nml_addPath($path, $sync) {
 
                         if (errn == 0) {
 
+                            self.versions[name] = typeof undefined;
                             $res(name);
                         }
                         else if (errn == 1) {

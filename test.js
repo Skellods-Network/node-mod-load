@@ -32,6 +32,10 @@ nml.addPath('./test-modules/bar.js').then(($mod) => {
 nml.addPath('./test-modules/baz').then(($mod) => {
 
     console.log('Test Package addPath:\t\t' + (($mod === 'baz' && libs.bar && libs.bar.bar === true) ? 'OK' : 'ERROR'));
+
+    // version
+    console.log('Test version:\t\t\t' + (nml.versions[$mod] === '1.0.0' ? 'OK' : 'ERROR'));
+
 }, ($err) => {
 
     console.log('Test Package addPath:\t\tERROR - ' + $err);

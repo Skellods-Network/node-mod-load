@@ -5,6 +5,7 @@ module.exports = class NML {
     constructor($namespace) {
 
         this.libs = {};
+        this.versions = {};
     }
 
     /**

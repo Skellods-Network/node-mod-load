@@ -5,6 +5,7 @@ var nmlC = require('./nml.h.js');
 var nmlO = nmlC('_default');
 
 nmlC.libs = nmlO.libs;
+nmlC.versions = nmlO.versions;
 
 var i = 0;
 var k = Object.getOwnPropertyNames(nmlO.__proto__);
