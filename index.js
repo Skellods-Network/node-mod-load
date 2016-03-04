@@ -10,7 +10,7 @@ require('./src/nml.addMeta.c.js');
 require('./src/nml.addPath.c.js');
 require('./src/nml.getPackageInfo.c.js');
 
-// This is the main fail, which serves as both, a factory function and an object of NML for "static" method usage
+// This is the main file, which serves as both: a factory function and an object of NML for "static" method usage
 // JS is so awesome for allowing things like this little miracle
 module.exports = require('./src/nml.h.js');
 
