@@ -36,6 +36,8 @@
     "type": "git",
     "url": "git+https://github.com/Skellods-Network/node-mod-load.git"
   },
-  "scripts": {},
+  "scripts": {
+    "test": "node test.js"
+  },
   "version": "3.0.0"
 }
