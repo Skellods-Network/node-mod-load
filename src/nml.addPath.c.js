@@ -1,4 +1,4 @@
-﻿'use strict';
+'use strict';
 
 var fs = require('fs');
 var path = require('path');
@@ -23,7 +23,7 @@ function addSafe($name, $absPath) {
 };
 
 nml.prototype.addPath = function f_nml_addPath($path, $sync) {
-    
+
     var self = this;
     var work = function ($res, $rej) {
 
@@ -45,19 +45,40 @@ nml.prototype.addPath = function f_nml_addPath($path, $sync) {
             if ($stats.isFile()) {
 
                 name = path.basename($path, '.js');
-                var errn = addSafe.apply(self, [name, path.normalize(path.dirname(require.main.filename) + path.sep + $path)]);
+                var errn = addSafe.apply(self, [name, path.dirname(require.main.filename) + path.sep + path.normalize($path)]);//
                 if (errn == 0) {
 
                     self.versions[name] = typeof undefined;
-                    $res(name);
+                    if ($sync) {
+
+                        return name;
+                    }
+                    else {
+
+                        $res(name);
+                    }
                 }
                 else if (errn == 1) {
 
-                    $rej(msg.ERR_DUPLICATE_NAME + name);
+                    if ($sync) {
+
+                        throw msg.ERR_DUPLICATE_NAME + name;
+                    }
+                    else {
+
+                        $rej(msg.ERR_DUPLICATE_NAME + name);
+                    }
                 }
                 else {
 
-                    $rej(msg.ERR_NOT_LOADABLE + name);
+                    if ($sync) {
+
+                        throw msg.ERR_NOT_LOADABLE + name;
+                    }
+                    else {
+
+                        $rej(msg.ERR_NOT_LOADABLE + name);
+                    }
                 }
             }
             else {
@@ -70,15 +91,36 @@ nml.prototype.addPath = function f_nml_addPath($path, $sync) {
                     if (errn == 0) {
 
                         self.versions[$info.name] = typeof $info.version === 'string' ? $info.version : typeof $info.version;
-                        $res($info.name);
+                        if ($sync) {
+
+                            return $info.name;
+                        }
+                        else {
+
+                            $res($info.name);
+                        }
                     }
                     else if (errn == 1) {
 
-                        $rej(msg.ERR_DUPLICATE_NAME + $info.name);
+                        if ($sync) {
+
+                            throw msg.ERR_DUPLICATE_NAME + $info.name;
+                        }
+                        else {
+
+                            $rej(msg.ERR_DUPLICATE_NAME + $info.name);
+                        }
                     }
                     else {
 
-                        $rej(msg.ERR_NOT_LOADABLE + $info.name);
+                        if ($sync) {
+
+                            throw msg.ERR_NOT_LOADABLE + $info.name;
+                        }
+                        else {
+
+                            $rej(msg.ERR_NOT_LOADABLE + $info.name);
+                        }
                     }
                 }, function ($err) {
 
@@ -86,7 +128,7 @@ nml.prototype.addPath = function f_nml_addPath($path, $sync) {
                     fs.open($path + path.sep + 'index.js', 'r', function ($err, $fd) {
 
                         if ($err) {
-                                
+
                             // This is no module package
                             $rej('Not stupidly Loadable: ' + $path);
                             return;
@@ -99,15 +141,36 @@ nml.prototype.addPath = function f_nml_addPath($path, $sync) {
                         if (errn == 0) {
 
                             self.versions[name] = typeof undefined;
-                            $res(name);
+                            if ($sync) {
+
+                                return name;
+                            }
+                            else {
+
+                                $res(name);
+                            }
                         }
                         else if (errn == 1) {
 
-                            $rej(msg.ERR_DUPLICATE_NAME + name);
+                            if ($sync) {
+
+                                throw msg.ERR_DUPLICATE_NAME + name;
+                            }
+                            else {
+
+                                $rej(msg.ERR_DUPLICATE_NAME + name);
+                            }
                         }
                         else {
 
-                            $rej(msg.ERR_NOT_LOADABLE + name);
+                            if ($sync) {
+
+                                throw msg.ERR_NOT_LOADABLE + name;
+                            }
+                            else {
+
+                                $rej(msg.ERR_NOT_LOADABLE + name);
+                            }
                         }
                     });
                 });
