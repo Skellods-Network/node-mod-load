@@ -52,7 +52,7 @@ nml.prototype.addDir = function f_nml_addDir($dir, $sync) {
                 var res = [];
                 while (i < l) {
 
-                    res.push(self.addPath($files[i], $sync));
+                    res.push(self.addPath(path.normalize($dir + path.sep) + $files[i], $sync));
                     i++;
                 }
 
