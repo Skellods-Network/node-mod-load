@@ -27,6 +27,22 @@ nml.prototype.addPath = function f_nml_addPath($path, $sync) {
     var self = this;
     var work = function ($res, $rej) {
 
+        if (!$res) {
+
+            $res = $r => {
+
+                return $r;
+            };
+        }
+        
+        if (!$rej) {
+
+            $rej = $err => {
+                
+                throw new Error($err);
+            };
+        }
+
         var processStats = function ($err, $stats) {
 
             if ($err) {
@@ -45,7 +61,17 @@ nml.prototype.addPath = function f_nml_addPath($path, $sync) {
             if ($stats.isFile()) {
 
                 name = path.basename($path, '.js');
-                var errn = addSafe.apply(self, [name, path.dirname(require.main.filename) + path.sep + path.normalize($path)]);//
+
+                var errn;
+                if (path.isAbsolute($path)) {
+
+                    errn = addSafe.apply(self, [name, $path]);
+                }
+                else {
+
+                    errn = addSafe.apply(self, [name, path.normalize(path.dirname(require.main.filename) + path.sep + $path)]);
+                }
+
                 if (errn == 0) {
 
                     self.versions[name] = typeof undefined;
