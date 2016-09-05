@@ -169,7 +169,11 @@
 
                     name = path.basename($path, '.js');
                     _queue[name] = $path;
-                    $res(name);
+                    if (!$sync) {
+                        
+                        $res(name);
+                    }
+                    
                     if (_prefetch) {
 
                         _flush();
