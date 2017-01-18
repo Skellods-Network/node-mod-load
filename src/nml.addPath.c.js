@@ -74,6 +74,7 @@ nml.prototype.addPath = function f_nml_addPath($path, $sync) {
                 if (errn == 0) {
 
                     this.versions[name] = typeof undefined;
+                    this.info[name] = {};
                     if ($sync) {
 
                         return name;
@@ -116,6 +117,7 @@ nml.prototype.addPath = function f_nml_addPath($path, $sync) {
                     if (errn == 0) {
 
                         this.versions[$info.name] = typeof $info.version === 'string' ? $info.version : typeof $info.version;
+                        this.info[$info.name] = $info;
                         if ($sync) {
 
                             return $info.name;
@@ -166,6 +168,7 @@ nml.prototype.addPath = function f_nml_addPath($path, $sync) {
                         if (errn == 0) {
 
                             this.versions[name] = typeof undefined;
+                            this.info[name] = {};
                             if ($sync) {
 
                                 return name;

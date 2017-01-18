@@ -6,6 +6,7 @@ module.exports = class NML {
 
         this.libs = {};
         this.versions = {};
+        this.info = {};
     }
 
     /**
