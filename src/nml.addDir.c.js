@@ -1,9 +1,9 @@
 ﻿'use strict';
 
-var fs = require('fs');
-var path = require('path');
+const fs = require('fs');
+const path = require('path');
 
-var nml = require('./nml-class.h.js');
+const nml = require('./nml-class.h.js');
 
 
 // Slightly modified in syntax, but not logic-wise
@@ -25,14 +25,13 @@ function reflect($promise) {
             resolved: false,
         };
     });
-};
+}
 
 nml.prototype.addDir = function f_nml_addDir($dir, $sync) {
 
-    var self = this;
-    var work = function ($res, $rej) {
+    const work = ($res, $rej) => {
 
-        var addResults = function ($err, $files) {
+        const addResults = ($err, $files) => {
 
             if ($err) {
 
@@ -45,14 +44,14 @@ nml.prototype.addDir = function f_nml_addDir($dir, $sync) {
                 $files = [];
             }
 
-            var i = 0;
-            var l = $files.length;
+            let i = 0;
+            const l = $files.length;
             if ($sync) {
 
-                var res = [];
+                const res = [];
                 while (i < l) {
 
-                    res.push(self.addPath(path.normalize($dir + path.sep) + $files[i], $sync));
+                    res.push(this.addPath(path.normalize($dir + path.sep) + $files[i], $sync));
                     i++;
                 }
 
@@ -60,19 +59,19 @@ nml.prototype.addDir = function f_nml_addDir($dir, $sync) {
             }
             else {
 
-                var proms = [];
+                const proms = [];
                 while (i < l) {
 
-                    proms.push(self.addPath(path.normalize($dir + path.sep) + $files[i], $sync));
+                    proms.push(this.addPath(path.normalize($dir + path.sep) + $files[i], $sync));
                     i++;
                 }
 
                 Promise.all(proms.map(reflect)).then($r => {
 
-                    var r = [];
-                    var i = 0;
-                    var l = $r.length;
-                    var ok = true;
+                    const r = [];
+                    let i = 0;
+                    const l = $r.length;
+                    let ok = true;
 
                     while (i < l) {
 
