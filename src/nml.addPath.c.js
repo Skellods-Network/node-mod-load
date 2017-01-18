@@ -1,10 +1,10 @@
 'use strict';
 
-var fs = require('fs');
-var path = require('path');
+const fs = require('fs');
+const path = require('path');
 
-var msg = require('./nml-messages.h.js');
-var nml = require('./nml-class.h.js');
+const msg = require('./nml-messages.h.js');
+const nml = require('./nml-class.h.js');
 
 
 function addSafe($name, $absPath) {
@@ -20,12 +20,11 @@ function addSafe($name, $absPath) {
         // imho a good application should check the return values for possible problems
         return 1;
     }
-};
+}
 
 nml.prototype.addPath = function f_nml_addPath($path, $sync) {
 
-    var self = this;
-    var work = function ($res, $rej) {
+    const work = ($res, $rej) => {
 
         if (!$res) {
 
@@ -43,7 +42,7 @@ nml.prototype.addPath = function f_nml_addPath($path, $sync) {
             };
         }
 
-        var processStats = function ($err, $stats) {
+        const processStats = ($err, $stats) => {
 
             if ($err) {
 
@@ -62,19 +61,19 @@ nml.prototype.addPath = function f_nml_addPath($path, $sync) {
 
                 name = path.basename($path, '.js');
 
-                var errn;
+                let errn;
                 if (path.isAbsolute($path)) {
 
-                    errn = addSafe.apply(self, [name, $path]);
+                    errn = addSafe.apply(this, [name, $path]);
                 }
                 else {
 
-                    errn = addSafe.apply(self, [name, path.normalize(path.dirname(require.main.filename) + path.sep + $path)]);
+                    errn = addSafe.apply(this, [name, path.normalize(path.dirname(require.main.filename) + path.sep + $path)]);
                 }
 
                 if (errn == 0) {
 
-                    self.versions[name] = typeof undefined;
+                    this.versions[name] = typeof undefined;
                     if ($sync) {
 
                         return name;
@@ -111,12 +110,12 @@ nml.prototype.addPath = function f_nml_addPath($path, $sync) {
 
                 name = $path;
 
-                self.getPackageInfo($path).then(function ($info) {
+                this.getPackageInfo($path).then($info => {
 
-                    var errn = addSafe.apply(self, [$info.name, path.normalize(path.dirname(require.main.filename) + path.sep + $path)]);
+                    const errn = addSafe.apply(this, [$info.name, path.normalize(path.dirname(require.main.filename) + path.sep + $path)]);
                     if (errn == 0) {
 
-                        self.versions[$info.name] = typeof $info.version === 'string' ? $info.version : typeof $info.version;
+                        this.versions[$info.name] = typeof $info.version === 'string' ? $info.version : typeof $info.version;
                         if ($sync) {
 
                             return $info.name;
@@ -148,10 +147,10 @@ nml.prototype.addPath = function f_nml_addPath($path, $sync) {
                             $rej(msg.ERR_NOT_LOADABLE + $info.name);
                         }
                     }
-                }, function ($err) {
+                }, () => {
 
                     // Package.json does not exist... lets look for index.js
-                    fs.open($path + path.sep + 'index.js', 'r', function ($err, $fd) {
+                    fs.open($path + path.sep + 'index.js', 'r', ($err, $fd) => {
 
                         if ($err) {
 
@@ -161,12 +160,12 @@ nml.prototype.addPath = function f_nml_addPath($path, $sync) {
                         }
 
                         fs.close($fd);
-                        var name = path.basename($path);
-                        var errn = addSafe.apply(self, [name, path.normalize(path.dirname(require.main.filename) + path.sep + $path) + path.sep + 'index.js']);
+                        const name = path.basename($path);
+                        const errn = addSafe.apply(this, [name, path.normalize(path.dirname(require.main.filename) + path.sep + $path) + path.sep + 'index.js']);
 
                         if (errn == 0) {
 
-                            self.versions[name] = typeof undefined;
+                            this.versions[name] = typeof undefined;
                             if ($sync) {
 
                                 return name;
