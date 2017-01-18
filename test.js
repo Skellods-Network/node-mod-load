@@ -1,98 +1,145 @@
 ﻿'use strict';
 
-var nml = require('.');
-var libs = nml.libs;
+const tap = require('tap');
+
+const nml = require('.');
+const libs = nml.libs;
 
 
 console.log('\n  Node-Mod-Load\n\n  A node module loader! -> TESTSUITE\n');
 
-// Get package info
-nml.getPackageInfo('.').then(($info) => {
+tap.test('Get package info', $t => {
 
-    console.log('Test getPackageInfo:\t\t' + ($info.version ? 'OK' : 'ERROR'));
-}, ($err) => {
+    $t.plan(3);
 
-    console.log('Test getPackageInfo:\t\tERROR - ' + $err);
+    nml.getPackageInfo('.').then($info => {
+
+        $t.ok($info.version);
+    }, $err => {
+
+        $t.fail($err);
+    });
+
+    nml.getPackageInfo('./does/not/exist').then(() => {
+
+        $t.fail('Found non-existent package.json');
+    }, () => {
+
+        $t.ok(true);
+    });
+
+    nml.getPackageInfo('./test-modules/error').then(() => {
+
+        $t.fail('Malformed package.json was accepted');
+    }, () => {
+
+        $t.ok(true);
+    });
 });
 
-// addMeta
-nml.addMeta('foo', { foo: true, });
-console.log('Test addMeta:\t\t\t' + ((libs.foo && libs.foo.foo === true) ? 'OK' : 'ERROR'));
+tap.test('addMeta', $t => {
 
-// addPath Module
-nml.addPath('./test-modules/bar.js').then(($mod) => {
+    $t.plan(2);
 
-    console.log('Test Module addPath:\t\t' + (($mod === 'bar' && libs.bar && libs.bar.bar === true) ? 'OK' : 'ERROR'));
-}, ($err) => {
+    nml.addMeta('foo', {foo: true,});
+    $t.ok(libs.foo && libs.foo.foo);
 
-    console.log('Test Module addPath:\t\tERROR - ' + $err);
+    $t.notOk(nml.addMeta('foo', {foo: true,}));
+
+    $t.end();
 });
 
-// addPath Package
-nml.addPath('./test-modules/baz').then(($mod) => {
+tap.test('addPath Module', $t => {
 
-    console.log('Test Package addPath:\t\t' + (($mod === 'baz' && libs.bar && libs.bar.bar === true) ? 'OK' : 'ERROR'));
+    $t.plan(1);
 
-    // version
-    console.log('Test version:\t\t\t' + (nml.versions[$mod] === '1.0.0' ? 'OK' : 'ERROR'));
+    nml.addPath('./test-modules/bar.js').then(($mod) => {
 
-}, ($err) => {
+        $t.ok($mod === 'bar' && libs.bar && libs.bar.bar);
+    }, ($err) => {
 
-    console.log('Test Package addPath:\t\tERROR - ' + $err);
+        $t.fail($err);
+    });
 });
 
-// addPath Folder
-nml.addPath('./test-modules/qux').then(($mod) => {
+tap.test('addPath Package', $t => {
 
-    console.log('Test Folder addPath:\t\t' + (($mod === 'qux' && libs.bar && libs.bar.bar === true) ? 'OK' : 'ERROR'));
-}, ($err) => {
+    $t.plan(2);
 
-    console.log('Test Folder addPath:\t\tERROR - ' + $err);
+    nml.addPath('./test-modules/baz').then(($mod) => {
+
+        $t.ok($mod === 'baz' && libs.bar && libs.bar.bar);
+        $t.ok(nml.versions[$mod] === '1.0.0');
+    }, ($err) => {
+
+        $t.fail($err);
+        $t.end();
+    });
 });
 
-// addDir
-var n2 = nml('N2');
-n2.addDir('./test-modules').then($res => {
+tap.test('addPath Folder', $t => {
 
-    if ($res.length == 3) {
+    $t.plan(1);
 
-        console.log('Test addDir:\t\t\tOK');
-    }
-    else {
+    nml.addPath('./test-modules/qux').then(($mod) => {
 
-        console.log('Test addDir:\t\t\tERROR');
-    }
-}, $err => {
+        $t.ok($mod === 'qux' && libs.bar && libs.bar.bar === true);
+    }, ($err) => {
 
-    console.log('Test addDir:\t\t\tERROR - ' + $err);
+        $t.fail($err);
+    });
 });
 
-// test namespace separation
-var n1 = nml('N1');
-process.nextTick(() => {
+tap.test('addDir', $t => {
 
-    // at this point, at least _default.foo should exist
-    // but the namespace N1 should be empty
-    if (Object.keys(n1.libs).length > 0) {
+    $t.plan(1);
 
-        console.log('Test namespace separation:\tERROR');
-        return;
+    const n2 = nml('N2');
+    n2.addDir('./test-modules').then($res => {
+
+        $t.equal($res.length, 4);
+    }, $err => {
+
+        $t.fail($err);
+    });
+
+
+    /* todo: sync tests
+    const n3 = nml('N3');
+    try {
+
+        let ret = n3.addDir('./test-modules', true);
     }
-    
-    n1.addMeta('n1', { n1: true, });
-    if (libs.n1) {
+    catch ($err) {
 
-        console.log('Test namespace separation:\tERROR');
-        return;
+        console.log($err);
     }
 
-    var testNS = nml('N1');
-    if (testNS.libs.n1 && testNS.libs.n1.n1 === true) {
 
-        console.log('Test namespace separation:\tOK');
-    }
-    else {
+    $t.equal(n3.libs.length, 3);
 
-        console.log('Test namespace separation:\tERROR');
-    }
+    n3.addDir('./test-modules', true);
+    */
+});
+
+tap.test('test namespace separation', $t => {
+
+    $t.plan(3);
+
+    const n1 = nml('N1');
+    process.nextTick(() => {
+
+        // at this point, at least _default.foo should exist
+        // but the namespace N1 should be empty
+        $t.ok(Object.keys(n1.libs).length == 0);
+
+        n1.addMeta('n1', { n1: true, });
+        $t.notOk(libs.n1);
+
+
+        const testNS = nml('N1');
+        $t.ok(testNS.libs.n1 && testNS.libs.n1.n1 === true);
+
+        $t.end();
+    });
 });

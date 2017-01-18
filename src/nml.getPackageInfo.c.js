@@ -1,17 +1,17 @@
-﻿'use static';
+﻿'use strict';
 
-var fs = require('fs');
-var path = require('path');
+const fs = require('fs');
+const path = require('path');
 
-var nml = require('./nml-class.h.js');
+const nml = require('./nml-class.h.js');
 
 
 nml.prototype.getPackageInfo = function f_nml_getPackageInfo($path) {
 
-    return new Promise(function ($res, $rej) {
+    return new Promise(($res, $rej) => {
 
         // Let's see if the given directory is a package module
-        fs.open($path + path.sep + 'package.json', 'r', function ($err, $fd) {
+        fs.open($path + path.sep + 'package.json', 'r', ($err, $fd) => {
 
             if ($err) {
 
@@ -20,7 +20,7 @@ nml.prototype.getPackageInfo = function f_nml_getPackageInfo($path) {
             }
 
             // YaY, there is a package.json. Let's read it to find out the name of the module-package
-            fs.fstat($fd, function ($err, $stats) {
+            fs.fstat($fd, ($err, $stats) => {
 
                 if ($err) {
 
@@ -29,8 +29,8 @@ nml.prototype.getPackageInfo = function f_nml_getPackageInfo($path) {
                     return;
                 }
 
-                var buffer = new Buffer($stats.size);
-                fs.read($fd, buffer, 0, buffer.length, null, function ($err, $bytesRead, $buffer) {
+                const buffer = new Buffer($stats.size);
+                fs.read($fd, buffer, 0, buffer.length, null, $err => {
 
                     if ($err) {
 
@@ -39,17 +39,13 @@ nml.prototype.getPackageInfo = function f_nml_getPackageInfo($path) {
                         return;
                     }
 
-                    var offset = 0;
-                    if (buffer[0] === 239) {
-
-                        offset = 3;
-                    }
-
-                    var data = buffer.toString("utf8", offset, buffer.length);
+                    // Handling BOMs
+                    const offset = buffer[0] === 239 ? 3 : 0;
+                    const data = buffer.toString("utf8", offset, buffer.length);
                     try {
                             
                         // Carefully parse the file... it might be malformed.
-                        var conf = JSON.parse(data);
+                        const conf = JSON.parse(data);
                         $res(conf);
                     }
                     catch ($e) {

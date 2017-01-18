@@ -1,16 +1,16 @@
-'use static';
+'use strict';
 
-var nmlC = require('./nml.h.js');
+const nmlC = require('./nml.h.js');
 
-var nmlO = nmlC('_default');
+const nmlO = nmlC('_default');
 
 nmlC.libs = nmlO.libs;
 nmlC.versions = nmlO.versions;
 
-var i = 0;
-var k = Object.getOwnPropertyNames(nmlO.__proto__);
-var l = k.length;
-var tmp = '';
+let i = 0;
+const k = Object.getOwnPropertyNames(nmlO.__proto__);
+const l = k.length;
+let tmp = '';
 while (i < l) {
 
     tmp = k[i];
