@@ -7,10 +7,7 @@
   "bugs": {
     "url": "https://github.com/Skellods-Network/node-mod-load/issues"
   },
-  "dependencies": {},
   "description": "Dynamic Module Loader for Node.JS",
-  "devDependencies": {},
-  "directories": {},
   "engines": {
     "node": ">=4.0.0"
   },
@@ -31,13 +28,16 @@
     }
   ],
   "name": "node-mod-load",
-  "optionalDependencies": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Skellods-Network/node-mod-load.git"
   },
   "scripts": {
-    "test": "node test.js"
+    "test": "tap test.js --coverage --coverage-report=lcov"
   },
-  "version": "3.0.1"
+  "version": "3.1.0",
+  "devDependencies": {
+    "coveralls": "^2.11.0",
+    "tap": "^8.0.0"
+  }
 }
