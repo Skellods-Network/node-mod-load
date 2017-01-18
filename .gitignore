@@ -3,3 +3,7 @@ node_modules/
 
 # JetBrains
 .idea/
+
+# Coverage
+coverage/
+.nyc_output/

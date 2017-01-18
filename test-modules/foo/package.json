@@ -1,0 +1,41 @@
+﻿{
+  "author": {
+    "email": "me@marco-alka.de",
+    "name": "Marco Alka",
+    "url": "https://marco-alka.de"
+  },
+  "bugs": {
+    "url": "https://github.com/Skellods-Network/node-mod-load/issues"
+  },
+  "dependencies": {},
+  "description": "TEST",
+  "devDependencies": {},
+  "directories": {},
+  "engines": {
+    "node": ">=4.0.0"
+  },
+  "homepage": "https://shps.io",
+  "keywords": [
+    "SHPS",
+    "lazy",
+    "load",
+    "loader",
+    "module"
+  ],
+  "license": "MIT",
+  "main": "index.js",
+  "maintainers": [
+    {
+      "name": "maruru",
+      "email": "me@marco-alka.de"
+    }
+  ],
+  "name": "foo",
+  "optionalDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Skellods-Network/node-mod-load.git"
+  },
+  "scripts": {},
+  "version": "1.0.0"
+}

@@ -1,8 +1,8 @@
 ﻿'use strict';
 
-module.exports = class NML {
+module.exports = class {
 
-    constructor($namespace) {
+    constructor() {
 
         this.libs = {};
         this.versions = {};
@@ -18,7 +18,7 @@ module.exports = class NML {
      *   Default: false
      * @result Promise if $sync is false
      */
-    addDir($dir, $sync) { throw 'Not Implemented'; };
+    addDir($dir, $sync) { /** throw 'Not Implemented'; */ };
 
     /**
      * Add an object directly
@@ -29,7 +29,7 @@ module.exports = class NML {
      *   Will be true if the object was added successfully
      *   And the object was not undefined
      */
-    addMeta($name, $obj) { throw 'Not Implemented'; };
+    addMeta($name, $obj) { /** throw 'Not Implemented'; */ };
 
     /**
      * Add a module
@@ -40,7 +40,7 @@ module.exports = class NML {
      *   Default: false
      * @result Promise if $sync is false
      */
-    addPath($path, $sync) { throw 'Not Implemented'; };
+    addPath($path, $sync) { /** throw 'Not Implemented'; */ };
 
     /**
      * Read package.json and return the content
@@ -48,5 +48,5 @@ module.exports = class NML {
      * @param $path string
      * @result Promise(Object)
      */
-    getPackageInfo($path) { throw 'Not Implemented'; };
+    getPackageInfo($path) { /** throw 'Not Implemented'; */ };
 };
