@@ -8,6 +8,7 @@ require('./src/nml-class.h.js');
 require('./src/nml.addDir.c.js');
 require('./src/nml.addMeta.c.js');
 require('./src/nml.addPath.c.js');
+require('./src/nml.on.c.js');
 require('./src/nml.getPackageInfo.c.js');
 
 // This is the main file, which serves as both: a factory function and an object of NML for "static" method usage

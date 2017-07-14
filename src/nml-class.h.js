@@ -49,4 +49,21 @@ module.exports = class {
      * @result Promise(Object)
      */
     getPackageInfo($path) { /** throw 'Not Implemented'; */ };
+
+    /**
+     * Attach event-listener to one of the following events.
+     * - detect
+     *     fired when a module was detected by addPath()
+     *     handler: (moduleName, path) => {}
+     * - load
+     *     fired when a module was loaded by addPath()
+     *     handler: (moduleName, path, moduleObject, packageInfo) => {}
+     * - error
+     *     fired when there was a module could not be loaded by addPath()
+     *     handler: (moduleName, path, error) => {}
+     *
+     * @param {string} $event
+     * @param {function} $handler
+     */
+    on($event, $handler) { /** throw 'Not Implemented'; */ };
 };
