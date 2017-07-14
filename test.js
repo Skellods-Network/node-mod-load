@@ -122,6 +122,58 @@ tap.test('addDir', $t => {
     */
 });
 
+tap.test('events', $t => {
+
+    $t.plan(11);
+
+    const n2 = nml('N3');
+    n2.on('detect', $mod => {
+        if (['bar', 'baz', 'error', 'foo', 'qux'].includes($mod)) {
+            $t.pass('Detect ' + $mod);
+        }
+        else {
+            $t.fail('Detect unknown module ' + $mod);
+        }
+    });
+
+    n2.on('load', ($mod, $p, $obj, $info) => {
+        if (['baz', 'bar', 'foo', 'qux'].includes($mod)) {
+            if (['baz', 'foo'].includes($mod) && !$info) {
+                $t.fail('missing package info for ' + $mod);
+            }
+            else if ($mod === 'foo' && $obj.foo !== true) {
+                $t.fail('Missing object');
+            }
+            else {
+                $t.pass('Load ' + $mod);
+            }
+        }
+        else {
+            $t.fail('Load unknown module ' + $mod);
+        }
+    });
+
+    n2.on('error', ($mod, $p, $e) => {
+        if ($mod !== 'error') {
+            $t.fail('Erred on unknown mod ' + $mod);
+        }
+        else if ($e instanceof Error) {
+            $t.pass('Error fires on error');
+        }
+        else {
+            $t.fail('Unknown ' + $e.toString());
+        }
+    });
+
+    n2.addDir('./test-modules').then($res => {
+
+        $t.equal($res.length, 4);
+    }, $err => {
+
+        $t.fail($err);
+    });
+});
+
 tap.test('test namespace separation', $t => {
 
     $t.plan(3);
