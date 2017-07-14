@@ -46,55 +46,46 @@ nml.prototype.addDir = function f_nml_addDir($dir, $sync) {
 
             let i = 0;
             const l = $files.length;
+            const proms = [];
+            while (i < l) {
+
+                proms.push(this.addPath(path.normalize($dir + path.sep) + $files[i], $sync));
+                i++;
+            }
+
             if ($sync) {
 
-                const res = [];
+                return proms;
+            }
+
+            Promise.all(proms.map(reflect)).then($r => {
+
+                const r = [];
+                let i = 0;
+                const l = $r.length;
+                let ok = true;
+
                 while (i < l) {
 
-                    res.push(this.addPath(path.normalize($dir + path.sep) + $files[i], $sync));
+                    if ($r[i].resolved) {
+
+                        r.push($r[i].v);
+                    }
+                    else if ($r[i].e.substr(0, 21) !== 'Not stupidly Loadable') {
+
+                        $rej($r[i].e);
+                        ok = false;
+                        break;
+                    }
+
                     i++;
                 }
 
-                return res;
-            }
-            else {
+                if (ok) {
 
-                const proms = [];
-                while (i < l) {
-
-                    proms.push(this.addPath(path.normalize($dir + path.sep) + $files[i], $sync));
-                    i++;
+                    $res(r);
                 }
-
-                Promise.all(proms.map(reflect)).then($r => {
-
-                    const r = [];
-                    let i = 0;
-                    const l = $r.length;
-                    let ok = true;
-
-                    while (i < l) {
-
-                        if ($r[i].resolved) {
-
-                            r.push($r[i].v);
-                        }
-                        else if ($r[i].e.substr(0,21) !== 'Not stupidly Loadable') {
-
-                            $rej($r[i].e);
-                            ok = false;
-                            break;
-                        }
-
-                        i++;
-                    }
-
-                    if (ok) {
-
-                        $res(r);
-                    }
-                }, $rej);
-            }
+            }, $rej);
         };
 
         if ($sync) {
