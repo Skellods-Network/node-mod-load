@@ -8,7 +8,7 @@ const me = module.exports = {
     error: [],
 
     fire: function ($ev) {
-        me[$ev].forEach($h => $h.apply(undefined, Array.from(arguments).slice(0)));
+        me[$ev].forEach($h => $h.apply(undefined, Array.from(arguments).slice(1)));
     },
 };
 
