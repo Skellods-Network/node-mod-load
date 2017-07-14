@@ -128,7 +128,7 @@ tap.test('events', $t => {
 
     const n2 = nml('N3');
     n2.on('detect', $mod => {
-        if (['bar', 'baz', 'error', 'foo', 'qux'].includes($mod)) {
+        if (['bar', 'baz', 'error', 'foo', 'qux'].indexOf($mod) >= 0) {
             $t.pass('Detect ' + $mod);
         }
         else {
@@ -137,8 +137,8 @@ tap.test('events', $t => {
     });
 
     n2.on('load', ($mod, $p, $obj, $info) => {
-        if (['baz', 'bar', 'foo', 'qux'].includes($mod)) {
-            if (['baz', 'foo'].includes($mod) && !$info) {
+        if (['baz', 'bar', 'foo', 'qux'].indexOf($mod) >= 0) {
+            if (['baz', 'foo'].indexOf($mod) >= 0 && !$info) {
                 $t.fail('missing package info for ' + $mod);
             }
             else if ($mod === 'foo' && $obj.foo !== true) {
@@ -183,7 +183,7 @@ tap.test('test namespace separation', $t => {
 
         // at this point, at least _default.foo should exist
         // but the namespace N1 should be empty
-        $t.ok(Object.keys(n1.libs).length == 0);
+        $t.ok(Object.keys(n1.libs).length === 0);
 
         n1.addMeta('n1', { n1: true, });
         $t.notOk(libs.n1);
