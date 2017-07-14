@@ -19,7 +19,7 @@ nml.prototype.on = function($event, $handler) {
         return;
     }
 
-    if (!me[ev].indexOf($handler) < 0) {
+    if (me[ev].indexOf($handler) < 0) {
         me[ev].push($handler);
     }
 };
