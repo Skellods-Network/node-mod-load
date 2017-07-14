@@ -18,6 +18,9 @@ They do not have a separate file for them and should just be a JS-Object which c
 This module was first created for SHPS, but then separated for easy use by everyone :)
 
 ### Installation
+
+Requires Node.JS >= 4
+
 ```sh
 $ npm i node-mod-load
 ```

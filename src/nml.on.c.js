@@ -7,7 +7,9 @@ const me = module.exports = {
     load: [],
     error: [],
 
-    fire: ($ev, ...args) => me[$ev].forEach($h => $h.apply(undefined, args)),
+    fire: function ($ev) {
+        me[$ev].forEach($h => $h.apply(undefined, Array.from(arguments).slice(0)));
+    },
 };
 
 nml.prototype.on = function($event, $handler) {
