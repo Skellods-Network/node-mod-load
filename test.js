@@ -122,6 +122,58 @@ tap.test('addDir', $t => {
     */
 });
 
+tap.test('events', $t => {
+
+    $t.plan(11);
+
+    const n2 = nml('N3');
+    n2.on('detect', $mod => {
+        if (['bar', 'baz', 'error', 'foo', 'qux'].indexOf($mod) >= 0) {
+            $t.pass('Detect ' + $mod);
+        }
+        else {
+            $t.fail('Detect unknown module ' + $mod);
+        }
+    });
+
+    n2.on('load', ($mod, $p, $obj, $info) => {
+        if (['baz', 'bar', 'foo', 'qux'].indexOf($mod) >= 0) {
+            if (['baz', 'foo'].indexOf($mod) >= 0 && !$info) {
+                $t.fail('missing package info for ' + $mod);
+            }
+            else if ($mod === 'foo' && $obj.foo !== true) {
+                $t.fail('Missing object');
+            }
+            else {
+                $t.pass('Load ' + $mod);
+            }
+        }
+        else {
+            $t.fail('Load unknown module ' + $mod);
+        }
+    });
+
+    n2.on('error', ($mod, $p, $e) => {
+        if ($mod !== 'error') {
+            $t.fail('Erred on unknown mod ' + $mod);
+        }
+        else if ($e instanceof Error) {
+            $t.pass('Error fires on error');
+        }
+        else {
+            $t.fail('Unknown ' + $e.toString());
+        }
+    });
+
+    n2.addDir('./test-modules').then($res => {
+
+        $t.equal($res.length, 4);
+    }, $err => {
+
+        $t.fail($err);
+    });
+});
+
 tap.test('test namespace separation', $t => {
 
     $t.plan(3);
@@ -131,7 +183,7 @@ tap.test('test namespace separation', $t => {
 
         // at this point, at least _default.foo should exist
         // but the namespace N1 should be empty
-        $t.ok(Object.keys(n1.libs).length == 0);
+        $t.ok(Object.keys(n1.libs).length === 0);
 
         n1.addMeta('n1', { n1: true, });
         $t.notOk(libs.n1);

@@ -5,6 +5,7 @@ const path = require('path');
 
 const msg = require('./nml-messages.h.js');
 const nml = require('./nml-class.h.js');
+const on = require('./nml.on.c');
 
 
 function addSafe($name, $absPath) {
@@ -62,17 +63,22 @@ nml.prototype.addPath = function f_nml_addPath($path, $sync) {
                 name = path.basename($path, '.js');
 
                 let errn;
+                let p;
                 if (path.isAbsolute($path)) {
 
-                    errn = addSafe.apply(this, [name, $path]);
+                    p = $path;
                 }
                 else {
 
-                    errn = addSafe.apply(this, [name, path.normalize(path.dirname(require.main.filename) + path.sep + $path)]);
+                    p = path.normalize(path.dirname(require.main.filename) + path.sep + $path);
                 }
 
-                if (errn == 0) {
+                on.fire('detect', name, p);
+                errn = addSafe.apply(this, [name, p]);
 
+                if (errn === 0) {
+
+                    on.fire('load', name, p, this.libs[name], undefined);
                     this.versions[name] = typeof undefined;
                     this.info[name] = {};
                     if ($sync) {
@@ -84,38 +90,45 @@ nml.prototype.addPath = function f_nml_addPath($path, $sync) {
                         $res(name);
                     }
                 }
-                else if (errn == 1) {
+                else if (errn === 1) {
 
+                    const reason = msg.ERR_DUPLICATE_NAME + name;
+                    on.fire('error', name, p, new Error(reason));
                     if ($sync) {
 
-                        throw msg.ERR_DUPLICATE_NAME + name;
+                        throw reason;
                     }
                     else {
 
-                        $rej(msg.ERR_DUPLICATE_NAME + name);
+                        $rej(reason);
                     }
                 }
                 else {
 
+                    const reason = msg.ERR_NOT_LOADABLE + name;
+                    on.fire('error', name, p, new Error(reason));
                     if ($sync) {
 
-                        throw msg.ERR_NOT_LOADABLE + name;
+                        throw reason;
                     }
                     else {
 
-                        $rej(msg.ERR_NOT_LOADABLE + name);
+                        $rej(reason);
                     }
                 }
             }
             else {
 
-                name = $path;
+                const p = path.normalize(path.dirname(require.main.filename) + path.sep + $path);
 
+                name = $path;
                 this.getPackageInfo($path).then($info => {
 
-                    const errn = addSafe.apply(this, [$info.name, path.normalize(path.dirname(require.main.filename) + path.sep + $path)]);
-                    if (errn == 0) {
+                    on.fire('detect', $info.name, p);
+                    const errn = addSafe.apply(this, [$info.name, p]);
+                    if (errn === 0) {
 
+                        on.fire('load', $info.name, p, this.libs[$info.name], $info);
                         this.versions[$info.name] = typeof $info.version === 'string' ? $info.version : typeof $info.version;
                         this.info[$info.name] = $info;
                         if ($sync) {
@@ -127,32 +140,44 @@ nml.prototype.addPath = function f_nml_addPath($path, $sync) {
                             $res($info.name);
                         }
                     }
-                    else if (errn == 1) {
+                    else if (errn === 1) {
 
+                        const reason = msg.ERR_DUPLICATE_NAME + $info.name;
+                        on.fire('error', name, p, new Error(reason));
                         if ($sync) {
 
-                            throw msg.ERR_DUPLICATE_NAME + $info.name;
+                            throw reason;
                         }
                         else {
 
-                            $rej(msg.ERR_DUPLICATE_NAME + $info.name);
+                            $rej(reason);
                         }
                     }
                     else {
 
+                        const reason = msg.ERR_NOT_LOADABLE + $info.name;
+                        on.fire('error', name, p, new Error(reason));
                         if ($sync) {
 
-                            throw msg.ERR_NOT_LOADABLE + $info.name;
+                            throw reason;
                         }
                         else {
 
-                            $rej(msg.ERR_NOT_LOADABLE + $info.name);
+                            $rej(reason);
                         }
                     }
-                }, () => {
+                }, $e => {
+
+                    const name = path.basename($path);
+                    const p = $path + path.sep + 'index.js';
+                    on.fire('detect', name, p);
+
+                    if ($e.code !== 'ENOENT') {
+                        on.fire('error', name, p, $e);
+                    }
 
                     // Package.json does not exist... lets look for index.js
-                    fs.open($path + path.sep + 'index.js', 'r', ($err, $fd) => {
+                    fs.open(p, 'r', ($err, $fd) => {
 
                         if ($err) {
 
@@ -162,11 +187,11 @@ nml.prototype.addPath = function f_nml_addPath($path, $sync) {
                         }
 
                         fs.close($fd);
-                        const name = path.basename($path);
                         const errn = addSafe.apply(this, [name, path.normalize(path.dirname(require.main.filename) + path.sep + $path) + path.sep + 'index.js']);
 
-                        if (errn == 0) {
+                        if (errn === 0) {
 
+                            on.fire('load', name, p, this.libs[name], undefined);
                             this.versions[name] = typeof undefined;
                             this.info[name] = {};
                             if ($sync) {
@@ -178,26 +203,30 @@ nml.prototype.addPath = function f_nml_addPath($path, $sync) {
                                 $res(name);
                             }
                         }
-                        else if (errn == 1) {
+                        else if (errn === 1) {
 
+                            const reason = msg.ERR_DUPLICATE_NAME + name;
+                            on.fire('error', name, p, new Error(reason));
                             if ($sync) {
 
-                                throw msg.ERR_DUPLICATE_NAME + name;
+                                throw reason;
                             }
                             else {
 
-                                $rej(msg.ERR_DUPLICATE_NAME + name);
+                                $rej(reason);
                             }
                         }
                         else {
 
+                            const reason = msg.ERR_NOT_LOADABLE + name;
+                            on.fire('error', name, p, new Error(reason));
                             if ($sync) {
 
-                                throw msg.ERR_NOT_LOADABLE + name;
+                                throw reason;
                             }
                             else {
 
-                                $rej(msg.ERR_NOT_LOADABLE + name);
+                                $rej(reason);
                             }
                         }
                     });

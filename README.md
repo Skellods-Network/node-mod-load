@@ -3,6 +3,8 @@
 [![Join the chat at https://gitter.im/Skellods-Network/node-mod-load](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/Skellods-Network/node-mod-load?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Semver](http://img.shields.io/SemVer/2.0.0.png)](http://semver.org/spec/v2.0.0.html)
 [![MIT](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://opensource.org/licenses/MIT)
+[![Build Status](https://travis-ci.org/Skellods-Network/node-mod-load.svg?branch=master)](https://travis-ci.org/Skellods-Network/node-mod-load)
+
 
 Lazy load modules and create consistent meta-modules
 
@@ -17,10 +19,10 @@ They do not have a separate file for them and should just be a JS-Object which c
 
 This module was first created for SHPS, but then separated for easy use by everyone :)
 
-### Version
-3.0.0
-
 ### Installation
+
+Requires Node.JS >= 4
+
 ```sh
 $ npm i node-mod-load
 ```
@@ -28,12 +30,13 @@ $ npm i node-mod-load
 Interface
 ----
 ```js
-class NML {
+module.exports = class {
 
-    constructor($namespace) {
+    constructor() {
 
         this.libs = {};
         this.versions = {};
+        this.info = {};
     }
 
     /**
@@ -45,7 +48,7 @@ class NML {
      *   Default: false
      * @result Promise if $sync is false
      */
-    addDir($dir, $sync) { throw 'Not Implemented'; };
+    addDir($dir, $sync) {};
 
     /**
      * Add an object directly
@@ -56,7 +59,7 @@ class NML {
      *   Will be true if the object was added successfully
      *   And the object was not undefined
      */
-    addMeta($name, $obj) { throw 'Not Implemented'; };
+    addMeta($name, $obj) {};
 
     /**
      * Add a module
@@ -67,7 +70,7 @@ class NML {
      *   Default: false
      * @result Promise if $sync is false
      */
-    addPath($path, $sync) { throw 'Not Implemented'; };
+    addPath($path, $sync) {};
 
     /**
      * Read package.json and return the content
@@ -75,7 +78,24 @@ class NML {
      * @param $path string
      * @result Promise(Object)
      */
-    getPackageInfo($path) { throw 'Not Implemented'; };
+    getPackageInfo($path) {};
+
+    /**
+     * Attach event-listener to one of the following events.
+     * - detect
+     *     fired when a module was detected by addPath()
+     *     handler: (moduleName, path) => {}
+     * - load
+     *     fired when a module was loaded by addPath()
+     *     handler: (moduleName, path, moduleObject, packageInfo) => {}
+     * - error
+     *     fired when there was a module could not be loaded by addPath()
+     *     handler: (moduleName, path, error) => {}
+     *
+     * @param {string} $event
+     * @param {function} $handler
+     */
+    on($event, $handler) {};
 };
 ```
 
@@ -90,6 +110,14 @@ var nml = require('node-mod-load');
 // Node Mod Load is able to read package information and return an object containing said information
 var packageConfig = nml.getPackageInfo('./plugins/demo');
 console.log('Plugin found: ' + packageConfig.name);
+
+// Act on module events
+nml.on('load', (modName, path, mod, info) => {
+  console.log(`Loaded "${modname}" from "${path}" at version "${info.version}"`);
+
+  // do sth. with the module
+  mod.foo();
+});
 
 // This will add a single module or module-package to the list
 // addPath will return a promise
@@ -137,26 +165,7 @@ When adding a module package (folder with `package.json`), the version may be re
 console.log('Version of foo: ' + myNamespacedNML.versions['foo']);
 ```
 
-Version History
-----
-
-- 3.0.0
-  - [SEMVER MAJOR] deprecate ES6 Proxies (they are not stable yet and frankly at the moment a pain to maintain)
-  - [SEMVER MINOR] add namespaces (SHPS requirement)
-  - [SEMVER PATCH] restructure internals for better overview and debugging (works like black magic)
-- 2.1.1
-  - [SEMVER PATCH] fixed non-proxy version
-  - [SEMVER PATCH] moved TODO list into github-issues
-- 2.1.0
-  - [SEMVER MINOR] exposed `getPackageInfo()`
-- 2.0.0
-  - [SEMVER MAJOR] missing package.json and index.json will not reject the promise any more
-  - [SEMVER PATCH] fixed problems with BOM
-- 1.0.1 - Added Keywords
-
 License
 ----
 
 MIT
-
-**Free Software, Hell Yeah!**
