@@ -3,6 +3,8 @@
 [![Join the chat at https://gitter.im/Skellods-Network/node-mod-load](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/Skellods-Network/node-mod-load?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Semver](http://img.shields.io/SemVer/2.0.0.png)](http://semver.org/spec/v2.0.0.html)
 [![MIT](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://opensource.org/licenses/MIT)
+[![Build Status](https://travis-ci.org/Skellods-Network/node-mod-load.svg?branch=master)](https://travis-ci.org/Skellods-Network/node-mod-load)
+
 
 Lazy load modules and create consistent meta-modules
 
