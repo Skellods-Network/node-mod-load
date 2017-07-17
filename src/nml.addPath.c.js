@@ -119,7 +119,15 @@ nml.prototype.addPath = function f_nml_addPath($path, $sync) {
             }
             else {
 
-                const p = path.normalize(path.dirname(require.main.filename) + path.sep + $path);
+                let p;
+                if (path.isAbsolute($path)) {
+
+                    p = $path;
+                }
+                else {
+
+                    p = path.normalize(path.dirname(require.main.filename) + path.sep + $path);
+                }
 
                 name = $path;
                 this.getPackageInfo($path).then($info => {
