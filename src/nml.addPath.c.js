@@ -130,7 +130,8 @@ nml.prototype.addPath = function f_nml_addPath($path, $sync) {
                 }
 
                 name = $path;
-                this.getPackageInfo($path).then($info => {
+
+                const doAdd = $info => {
 
                     on.fire('detect', $info.name, p);
                     const errn = addSafe.apply(this, [$info.name, p]);
@@ -174,7 +175,9 @@ nml.prototype.addPath = function f_nml_addPath($path, $sync) {
                             $rej(reason);
                         }
                     }
-                }, $e => {
+                };
+
+                const doError = $e => {
 
                     const name = path.basename($path);
                     const p = $path + path.sep + 'index.js';
@@ -238,7 +241,26 @@ nml.prototype.addPath = function f_nml_addPath($path, $sync) {
                             }
                         }
                     });
-                });
+                };
+
+                let pInfo;
+                try {
+
+                    pInfo = this.getPackageInfo($path, $sync);
+                }
+                catch ($e) {
+
+                    return doError($e);
+                }
+
+                if ($sync) {
+
+                    return doAdd(pInfo);
+                }
+                else {
+
+                    pInfo.then(doAdd, doError);
+                }
             }
 
             return name;

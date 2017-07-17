@@ -6,12 +6,19 @@ const path = require('path');
 const nml = require('./nml-class.h.js');
 
 
-nml.prototype.getPackageInfo = function f_nml_getPackageInfo($path) {
+nml.prototype.getPackageInfo = function f_nml_getPackageInfo($path, $sync) {
+
+    const confPath = $path + path.sep + 'package.json';
+
+    if ($sync) {
+
+        return require(confPath);
+    }
 
     return new Promise(($res, $rej) => {
 
         // Let's see if the given directory is a package module
-        fs.open($path + path.sep + 'package.json', 'r', ($err, $fd) => {
+        fs.open(confPath, 'r', ($err, $fd) => {
 
             if ($err) {
 
